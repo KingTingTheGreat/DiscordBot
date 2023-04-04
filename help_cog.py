@@ -30,6 +30,7 @@ General commands:
 
     @commands.command(name="help", help="Displays all the available commands")
     async def help(self, ctx):
+        print('help command')
         await ctx.send(self.help_message)
 
     async def send_to_all(self, msg):

@@ -69,6 +69,7 @@ class music_cog(commands.Cog):
 
     @commands.command(name="play", aliases=["p","P","playing"], help="Plays selected song from youtube")
     async def play(self, ctx, *args):
+        print('play command')
         query = " ".join(args)
         
         # voice_channel = ctx.author.voice.channel
@@ -90,6 +91,7 @@ class music_cog(commands.Cog):
 
     @commands.command(name="pause", help="Pauses the current song being played")
     async def pause(self, ctx, *args):
+        print('pause command')
         if self.is_playing:
             ctx.send("Pausing playback")
             self.is_playing = False
@@ -98,6 +100,7 @@ class music_cog(commands.Cog):
 
     @commands.command(name = "resume", aliases=["r","R"], help="Resumes playing with the discord bot")
     async def resume(self, ctx, *args):
+        print('resume command')
         if self.is_paused:
             ctx.send("Resuming playback")
             self.is_paused = False
@@ -106,6 +109,7 @@ class music_cog(commands.Cog):
 
     @commands.command(name = "skip", aliases=["s","S"], help="Skips the current song being played")
     async def skip(self, ctx):
+        print('skip command')
         if self.vc != None and self.vc:
             ctx.send("Skipping song")
             self.vc.stop()
@@ -115,6 +119,7 @@ class music_cog(commands.Cog):
 
     @commands.command(name="queue", aliases=["q"], help="Displays the current songs in queue")
     async def queue(self, ctx):
+        print('queue command')
         retval = ""
         for i in range(0, len(self.music_queue)):
             # display first 10 songs in the queue
@@ -129,6 +134,7 @@ class music_cog(commands.Cog):
 
     @commands.command(name="clear", aliases=["c", "bin"], help="Stops the music and clears the queue")
     async def clear(self, ctx):
+        print('clear command')
         if self.vc != None and self.is_playing:
             self.vc.stop()
         self.music_queue = []
@@ -136,6 +142,7 @@ class music_cog(commands.Cog):
 
     @commands.command(name="leave", aliases=["disconnect", "l", "d"], help="Kick the bot from VC")
     async def leave(self, ctx):
+        print('leave command')
         self.is_playing = False
         self.is_paused = False
         self.music_queue = []
