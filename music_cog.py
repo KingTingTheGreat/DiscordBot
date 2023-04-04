@@ -99,11 +99,11 @@ class music_cog(commands.Cog):
         elif self.is_paused:
             self.vc.resume()
         else:
-            if ctx.author.name != "KingTing":
+            if ctx.author.guild_permissions.administrator == False:
                 await ctx.send("You do not have permission to use this command")
                 return
             else:
-                await ctx.send("Hello, KingTing")
+                await ctx.send("Hello, admin")
             song = self.search_yt(query)
             if type(song) == type(True):
                 await ctx.send("Could not download the song. Incorrect format try another keyword. This could be due to playlist or a livestream format.")
