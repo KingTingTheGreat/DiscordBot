@@ -48,7 +48,7 @@ class music_cog(commands.Cog):
             self.is_playing = True
 
             m_url = self.music_queue[0][0]['source']
-            
+
             #try to connect to voice channel if you are not already connected
             if self.vc == None or not self.vc.is_connected():
                 self.vc = await self.music_queue[0][1].connect()
@@ -71,8 +71,8 @@ class music_cog(commands.Cog):
     async def play(self, ctx, *args):
         query = " ".join(args)
         
-        voice_channel = ctx.author.voice.channel
-        if voice_channel is None:
+        # voice_channel = ctx.author.voice.channel
+        if ctx.author.voice is None:
             #you need to be connected so that the bot knows where to go
             await ctx.send("You must be in a voice channel!")
         elif self.is_paused:
@@ -83,7 +83,7 @@ class music_cog(commands.Cog):
                 await ctx.send("Could not download the song. Incorrect format try another keyword. This could be due to playlist or a livestream format.")
             else:
                 await ctx.send("Song added to the queue")
-                self.music_queue.append([song, voice_channel])
+                self.music_queue.append([song, ctx.author.voice.channel])
                 
                 if self.is_playing == False:
                     await self.play_music(ctx)
@@ -91,6 +91,7 @@ class music_cog(commands.Cog):
     @commands.command(name="pause", help="Pauses the current song being played")
     async def pause(self, ctx, *args):
         if self.is_playing:
+            ctx.send("Pausing playback")
             self.is_playing = False
             self.is_paused = True
             self.vc.pause()
@@ -98,6 +99,7 @@ class music_cog(commands.Cog):
     @commands.command(name = "resume", aliases=["r","R"], help="Resumes playing with the discord bot")
     async def resume(self, ctx, *args):
         if self.is_paused:
+            ctx.send("Resuming playback")
             self.is_paused = False
             self.is_playing = True
             self.vc.resume()
@@ -105,6 +107,7 @@ class music_cog(commands.Cog):
     @commands.command(name = "skip", aliases=["s","S"], help="Skips the current song being played")
     async def skip(self, ctx):
         if self.vc != None and self.vc:
+            ctx.send("Skipping song")
             self.vc.stop()
             # try to play next in queue if it exists
             await self.play_music(ctx)
@@ -135,4 +138,6 @@ class music_cog(commands.Cog):
     async def leave(self, ctx):
         self.is_playing = False
         self.is_paused = False
+        self.music_queue = []
+        ctx.send("Leaving voice channel :(")
         await self.vc.disconnect()
