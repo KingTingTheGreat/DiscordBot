@@ -10,9 +10,8 @@ class music_cog(commands.Cog):
         self.is_playing = False
         self.is_paused = False
 
-        # 2d array: [song, channel]
+        # [[song, channel]]
         self.music_queue = []
-        self.YDL_OPTIONS = {'format': 'bestaudio', 'noplaylist':'True'}
         self.FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
 
         self.vc = None
@@ -77,10 +76,11 @@ class music_cog(commands.Cog):
             self.vc.resume()
         else:
             song = self.search_yt(query)
+            title = "title"  # use this to access the title of the song
             if type(song) == type(True):
                 await ctx.send("Could not download the song. Incorrect format try another keyword. This could be due to playlist or a livestream format.")
             else:
-                await ctx.send("Song added to the queue")
+                await ctx.send(f'Added "{song[title]}" to the queue')
                 self.music_queue.append([song, ctx.author.voice.channel])
                 
                 if self.is_playing == False:
@@ -103,10 +103,11 @@ class music_cog(commands.Cog):
             else:
                 await ctx.send("Hello, admin")
             song = self.search_yt(query)
+            title = "title"  # use this to access the title of the song
             if type(song) == type(True):
                 await ctx.send("Could not download the song. Incorrect format try another keyword. This could be due to playlist or a livestream format.")
             else:
-                await ctx.send("Song added to the queue")
+                await ctx.send(f'Added "{song[title]}" to the queue')
                 self.music_queue.insert(0, [song, ctx.author.voice.channel])
                 if self.is_playing == False:
                     await self.play_music(ctx)
