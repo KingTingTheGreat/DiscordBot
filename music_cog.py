@@ -10,6 +10,8 @@ class music_cog(commands.Cog):
         self.is_playing = False
         self.is_paused = False
 
+        self.current_song = None
+
         # [[song, channel]]
         self.music_queue = []
         self.FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
@@ -33,11 +35,12 @@ class music_cog(commands.Cog):
             m_url = self.music_queue[0][0]['source']
 
             #remove the first element as you are currently playing it
-            self.music_queue.pop(0)
+            self.current_song = self.music_queue.pop(0)
 
             self.vc.play(discord.FFmpegPCMAudio(m_url, **self.FFMPEG_OPTIONS), after=lambda e: self.play_next())
         else:
             self.is_playing = False
+            self.current_song = None
 
     # infinite loop checking 
     async def play_music(self, ctx):
@@ -113,6 +116,18 @@ class music_cog(commands.Cog):
                 if self.is_playing == False:
                     await self.play_music(ctx)
 
+    @commands.command(name="current", aliases=["c","C"], help="Displays the current song being played")
+    async def current(self, ctx):
+        print('current command')
+        if self.is_playing:
+            # debugging
+            if self.current_song is None:
+                print('something went wrong. current song is None but something is playing')
+                return
+            await ctx.send(f'Now playing: {self.music_queue[0][0]["title"]}')
+        else:
+            await ctx.send("No song is currently playing")
+
     @commands.command(name="pause", help="Pauses the current song being played")
     async def pause(self, ctx, *args):
         print('pause command')
@@ -162,6 +177,7 @@ class music_cog(commands.Cog):
         if self.vc != None and self.is_playing:
             self.vc.stop()
         self.music_queue = []
+        self.current_song = None
         await ctx.send("Music queue cleared")
 
     @commands.command(name="leave", aliases=["disconnect", "l", "d"], help="Kick the bot from VC")
@@ -170,5 +186,6 @@ class music_cog(commands.Cog):
         self.is_playing = False
         self.is_paused = False
         self.music_queue = []
+        self.current_song = None
         await ctx.send("Leaving voice channel :(")
         await self.vc.disconnect()

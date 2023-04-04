@@ -15,6 +15,7 @@ General commands:
 .leave(l, disconnect) - Disconnected the bot from the voice channel
 .pause - pauses the current song being played or resumes if already paused
 .resume - resumes playing the current song
+.current(c) - displays the current song being played
 ```
 """
         self.text_channel_list = []
