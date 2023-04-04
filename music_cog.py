@@ -144,7 +144,7 @@ class music_cog(commands.Cog):
     @commands.command(name="queue", aliases=["q"], help="Displays the current songs in queue")
     async def queue(self, ctx):
         print('queue command')
-        retval = ""
+        retval = "Here is the queue:\n"
         for i in range(0, len(self.music_queue)):
             # display first 10 songs in the queue
             if i >= 10: 
