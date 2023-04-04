@@ -1,8 +1,7 @@
 from ast import alias
 import discord
 from discord.ext import commands
-
-from youtube_dl import YoutubeDL
+import pytube as pt
 
 class music_cog(commands.Cog):
     def __init__(self, bot):
@@ -20,13 +19,12 @@ class music_cog(commands.Cog):
 
      #searching the item on youtube
     def search_yt(self, item):
-        with YoutubeDL(self.YDL_OPTIONS) as ydl:
-            try: 
-                info = ydl.extract_info("ytsearch:%s" % item, download=False)['entries'][0]
-            except Exception: 
-                return False
-
-        return {'source': info['formats'][0]['url'], 'title': info['title']}
+        try:
+            video = pt.Search(item).results[0]
+            return {'source': video.streams.get_audio_only().url, 'title': video.title}
+        except Exception:
+            print('an exception occured while searching youtube')
+            return False
 
     def play_next(self):
         if len(self.music_queue) > 0:
