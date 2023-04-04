@@ -67,7 +67,7 @@ class music_cog(commands.Cog):
         else:
             self.is_playing = False
 
-    @commands.command(name="play", aliases=["p","P","playing"], help="Plays selected song from youtube")
+    @commands.command(name="play", aliases=["p","P"], help="Plays selected song from youtube")
     async def play(self, ctx, *args):
         print('play command')
         query = " ".join(args)
@@ -131,7 +131,7 @@ class music_cog(commands.Cog):
         else:
             await ctx.send("No music in queue")
 
-    @commands.command(name="clear", aliases=["c", "bin"], help="Stops the music and clears the queue")
+    @commands.command(name="clear", help="Stops the music and clears the queue")
     async def clear(self, ctx):
         print('clear command')
         if self.vc != None and self.is_playing:
