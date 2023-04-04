@@ -24,7 +24,8 @@ General commands:
     async def on_ready(self):
         for guild in self.bot.guilds:
             for channel in guild.text_channels:
-                self.text_channel_list.append(channel)
+                if channel.name == "general":
+                    self.text_channel_list.append(channel)
 
         await self.send_to_all(self.help_message)        
 
