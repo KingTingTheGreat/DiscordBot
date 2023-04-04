@@ -35,7 +35,3 @@ General commands:
     async def send_to_all(self, msg):
         for text_channel in self.text_channel_list:
             await text_channel.send(msg)
-
-    @commands.command(name="help", help="Displays all the available commands")
-    async def help(self, ctx):
-        await ctx.send(self.help_message)
