@@ -66,6 +66,7 @@ class music_cog(commands.Cog):
 
     @commands.command(name="play", aliases=["p","P"], help="Plays selected song from youtube")
     async def play(self, ctx, *args):
+        # print(self.is_playing, self.is_paused)
         print('play command')
         query = " ".join(args)
         
@@ -116,7 +117,7 @@ class music_cog(commands.Cog):
     async def pause(self, ctx, *args):
         print('pause command')
         if self.is_playing:
-            ctx.send("Pausing playback")
+            await ctx.send("Pausing playback")
             self.is_playing = False
             self.is_paused = True
             self.vc.pause()
@@ -125,7 +126,7 @@ class music_cog(commands.Cog):
     async def resume(self, ctx, *args):
         print('resume command')
         if self.is_paused:
-            ctx.send("Resuming playback")
+            await ctx.send("Resuming playback")
             self.is_paused = False
             self.is_playing = True
             self.vc.resume()
@@ -134,7 +135,7 @@ class music_cog(commands.Cog):
     async def skip(self, ctx):
         print('skip command')
         if self.vc != None and self.vc:
-            ctx.send("Skipping song")
+            await ctx.send("Skipping song")
             self.vc.stop()
             # try to play next in queue if it exists
             await self.play_music(ctx)
@@ -169,5 +170,5 @@ class music_cog(commands.Cog):
         self.is_playing = False
         self.is_paused = False
         self.music_queue = []
-        ctx.send("Leaving voice channel :(")
+        await ctx.send("Leaving voice channel :(")
         await self.vc.disconnect()
