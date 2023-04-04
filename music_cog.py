@@ -88,6 +88,26 @@ class music_cog(commands.Cog):
                 if self.is_playing == False:
                     await self.play_music(ctx)
 
+    @commands.command(name="priority_play", aliases=["prio_play","prio_p","priop"], help="adds song to the front of the queue")
+    async def priority_play(self, ctx, *args):
+        print('priority_play command')
+        query = " ".join(args)
+        
+        if ctx.author.voice is None:
+            #you need to be connected so that the bot knows where to go
+            await ctx.send("You must be in a voice channel!")
+        elif self.is_paused:
+            self.vc.resume()
+        else:
+            song = self.search_yt(query)
+            if type(song) == type(True):
+                await ctx.send("Could not download the song. Incorrect format try another keyword. This could be due to playlist or a livestream format.")
+            else:
+                await ctx.send("Song added to the queue")
+                self.music_queue.insert(0, [song, ctx.author.voice.channel])
+                if self.is_playing == False:
+                    await self.play_music(ctx)
+
     @commands.command(name="pause", help="Pauses the current song being played")
     async def pause(self, ctx, *args):
         print('pause command')
