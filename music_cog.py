@@ -72,7 +72,6 @@ class music_cog(commands.Cog):
         print('play command')
         query = " ".join(args)
         
-        # voice_channel = ctx.author.voice.channel
         if ctx.author.voice is None:
             #you need to be connected so that the bot knows where to go
             await ctx.send("You must be in a voice channel!")
