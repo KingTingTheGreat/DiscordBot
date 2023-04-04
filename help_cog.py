@@ -22,6 +22,7 @@ General commands:
     #some debug info so that we know the bot has started    
     @commands.Cog.listener()
     async def on_ready(self):
+        return # uncomment this line to enable the help message
         for guild in self.bot.guilds:
             for channel in guild.text_channels:
                 if channel.name == "general":
