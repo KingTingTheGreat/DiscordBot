@@ -56,7 +56,8 @@ General commands:
         target_server, target_channel, message = full_arg.split('%$')
         # find server/guild
         for guild in self.bot.guilds:
-            if guild.name != target_server:
+            # stripping quotes because of how discord.py handles guild names
+            if guild.name.strip('"') != target_server:
                 continue
             if ctx.author not in guild.members:
                 # user is not in this server
