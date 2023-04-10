@@ -32,11 +32,9 @@ class music_cog(commands.Cog):
         if len(self.music_queue) > 0:
             self.is_playing = True
 
-            #get the first url
-            m_url = self.music_queue[0][0]['source']
-
             #remove the first element as you are currently playing it
             self.current_song = self.music_queue.pop(0)
+            m_url = self.current_song[0]['source']
 
             self.vc.play(discord.FFmpegPCMAudio(m_url, **self.FFMPEG_OPTIONS), after=lambda e: self.play_next())
         else:
@@ -47,21 +45,21 @@ class music_cog(commands.Cog):
     async def play_music(self, ctx):
         if len(self.music_queue) > 0:
 
-            m_url = self.music_queue[0][0]['source']
+            target_channel = self.music_queue[0][1]
 
             #try to connect to voice channel if you are not already connected
             if self.vc == None or not self.vc.is_connected():
-                self.vc = await self.music_queue[0][1].connect()
-
+                self.vc = await target_channel.connect()
                 #in case we fail to connect
                 if self.vc == None:
                     await ctx.send("Could not connect to the voice channel")
                     return
             else:
-                await self.vc.move_to(self.music_queue[0][1])
+                await self.vc.move_to(target_channel)
             
             #remove the first element as you are currently playing it
             self.current_song = self.music_queue.pop(0)
+            m_url = self.current_song[0]['source']
             self.vc.play(discord.FFmpegPCMAudio(m_url, **self.FFMPEG_OPTIONS), after=lambda e: self.play_next())
             
             self.is_playing = True
