@@ -24,6 +24,7 @@ General commands:
     #some debug info so that we know the bot has started    
     @commands.Cog.listener()
     async def on_ready(self):
+        print('bot is ready')
         return # uncomment this line to enable the help message
         for guild in self.bot.guilds:
             for channel in guild.text_channels:
@@ -37,6 +38,7 @@ General commands:
         await ctx.send(self.help_message)
 
     async def send_to_all(self, msg):
+        print('send_to_all command')
         for text_channel in self.text_channel_list:
             await text_channel.send(msg)
 
@@ -45,6 +47,7 @@ General commands:
         """
         format of command call: .sm server%$channel%$message
         """
+        print('send_message command')
         # check if user is admin (or ridoot)
         if ctx.author.guild_permissions.administrator == False and ctx.author.name != 'ridoot':
             return
