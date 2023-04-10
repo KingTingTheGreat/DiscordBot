@@ -2,6 +2,7 @@ from ast import alias
 import discord
 from discord.ext import commands
 import pytube as pt
+import requests
 
 class music_cog(commands.Cog):
     def __init__(self, bot):
@@ -67,54 +68,40 @@ class music_cog(commands.Cog):
         else:
             self.is_playing = False
 
+    async def add_song_queue(self, ctx, query, front=False):
+        # user must be in a voice channel to add song to queue
+        if ctx.author.voice is None:
+            await ctx.send("You must be in a voice channel!")
+        elif self.is_paused:
+            self.vc.resume()
+        else:
+            await ctx.send(f'Searching for "{query}"...')
+            song = self.search_yt(query)
+            title = "title"  # use this to access the title of the song
+            if not song:
+                await ctx.send(f"{query} is invalid or not found")
+            else:
+                await ctx.send(f'Added "{song[title]}" to the queue')
+                if front:
+                    self.music_queue.insert(0, [song, ctx.author.voice.channel])
+                else:
+                    self.music_queue.append([song, ctx.author.voice.channel])
+                if self.is_playing == False:
+                    await self.play_music(ctx)
+
     @commands.command(name="play", aliases=["p","P"], help="Plays selected song from youtube")
     async def play(self, ctx, *args):
         # print(self.is_playing, self.is_paused)
         print('play command')
         query = " ".join(args)
+        await self.add_song_queue(ctx, query)
 
-        # check if the user is connected to a voice channel
-        if ctx.author.voice is None:
-            await ctx.send("You must be in a voice channel!")
-        elif self.is_paused:
-            self.vc.resume()
-        else:
-            song = self.search_yt(query)
-            title = "title"  # use this to access the title of the song
-            if not song:
-                await ctx.send("Could not download the song. Incorrect format try another keyword. This could be due to playlist or a livestream format.")
-            else:
-                await ctx.send(f'Added "{song[title]}" to the queue')
-                self.music_queue.append([song, ctx.author.voice.channel])
-                
-                if self.is_playing == False:
-                    await self.play_music(ctx)
 
     @commands.command(name="priority_play", aliases=["prio_play","prio_p","priop"], help="adds song to the front of the queue")
     async def priority_play(self, ctx, *args):
         print('priority_play command')
         query = " ".join(args)
-        
-        if ctx.author.voice is None:
-            #you need to be connected so that the bot knows where to go
-            await ctx.send("You must be in a voice channel!")
-        elif self.is_paused:
-            self.vc.resume()
-        else:
-            if ctx.author.guild_permissions.administrator == False:
-                await ctx.send("You do not have permission to use this command")
-                return
-            else:
-                await ctx.send("Hello, admin")
-            song = self.search_yt(query)
-            title = "title"  # use this to access the title of the song
-            if type(song) == type(True):
-                await ctx.send("Could not download the song. Incorrect format try another keyword. This could be due to playlist or a livestream format.")
-            else:
-                await ctx.send(f'Added "{song[title]}" to the queue')
-                self.music_queue.insert(0, [song, ctx.author.voice.channel])
-                if self.is_playing == False:
-                    await self.play_music(ctx)
+        await self.add_song_queue(ctx, query, front=True)
 
     @commands.command(name="current", aliases=["c","C"], help="Displays the current song being played")
     async def current(self, ctx):
