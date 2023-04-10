@@ -7,7 +7,8 @@ class help_cog(commands.Cog):
         self.bot = bot
         self.help_message = """
 ```
-General commands:
+Hello! I am TheMusicIndustry, a bot that can play music from YouTube. 
+Here are some of my commands:
 .help - displays all the available commands
 .play(p) - finds the song on youtube and plays it in your current channel. Will resume playing the current song if it was paused
 .queue(s) - displays the current music queue
