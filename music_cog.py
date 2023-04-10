@@ -185,7 +185,7 @@ class music_cog(commands.Cog):
         self.current_song = None
         await ctx.send("Music queue cleared")
 
-    @commands.command(name="leave", aliases=["disconnect", "l", "d"], help="Kick the bot from VC")
+    @commands.command(name="leave", aliases=["disconnect", "dc"], help="Kick the bot from VC")
     async def leave(self, ctx):
         print('leave command')
         self.is_playing = False
