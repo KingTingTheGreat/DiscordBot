@@ -45,7 +45,6 @@ class music_cog(commands.Cog):
     # infinite loop checking 
     async def play_music(self, ctx):
         if len(self.music_queue) > 0:
-            self.is_playing = True
 
             m_url = self.music_queue[0][0]['source']
 
@@ -62,8 +61,9 @@ class music_cog(commands.Cog):
             
             #remove the first element as you are currently playing it
             self.current_song = self.music_queue.pop(0)
-
             self.vc.play(discord.FFmpegPCMAudio(m_url, **self.FFMPEG_OPTIONS), after=lambda e: self.play_next())
+            
+            self.is_playing = True
         else:
             self.is_playing = False
 
@@ -72,16 +72,16 @@ class music_cog(commands.Cog):
         # print(self.is_playing, self.is_paused)
         print('play command')
         query = " ".join(args)
-        
+
+        # check if the user is connected to a voice channel
         if ctx.author.voice is None:
-            #you need to be connected so that the bot knows where to go
             await ctx.send("You must be in a voice channel!")
         elif self.is_paused:
             self.vc.resume()
         else:
             song = self.search_yt(query)
             title = "title"  # use this to access the title of the song
-            if type(song) == type(True):
+            if not song:
                 await ctx.send("Could not download the song. Incorrect format try another keyword. This could be due to playlist or a livestream format.")
             else:
                 await ctx.send(f'Added "{song[title]}" to the queue')
