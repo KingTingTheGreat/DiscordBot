@@ -26,7 +26,7 @@ Here are some of my commands:
     @commands.Cog.listener()
     async def on_ready(self):
         print('bot is ready')
-        return # uncomment this line to enable the help message
+        return # uncomment this line to enable the help message on startup
         for guild in self.bot.guilds:
             for channel in guild.text_channels:
                 if channel.name == "general":
@@ -65,7 +65,7 @@ Here are some of my commands:
                 continue
             if ctx.author not in guild.members:
                 # user is not in this server
-                await ctx.send("You must be in the specified server")
+                await ctx.send(f"You must be in the specified server: {target_server}")
                 return
             # find channel
             for channel in guild.text_channels:
