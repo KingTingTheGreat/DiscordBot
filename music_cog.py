@@ -101,6 +101,9 @@ class music_cog(commands.Cog):
     async def priority_play(self, ctx, *args):
         print('priority_play command')
         query = " ".join(args)
+        if ctx.author.guild_permissions.administrator == False:
+            await ctx.send("You do not have permission to use this command")
+            return
         await self.add_song_queue(ctx, query, front=True)
 
     @commands.command(name="current", aliases=["c","C"], help="Displays the current song being played")
