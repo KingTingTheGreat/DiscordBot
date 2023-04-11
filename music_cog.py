@@ -21,20 +21,14 @@ class music_cog(commands.Cog):
 
      #searching the item on youtube
     def search_yt(self, item) -> dict[str, any]:
-        print('search_yt')
+        print(f'search_yt: {item}')
         try:
-            search:pt.Search = pt.Search(item)
-            while search.results:
-                video:pt.YouTube = search.results.pop(0)
-                # only videos that are longer than 1 minute to filter out shorts
-                if video.length > 60:
-                    return {'source': video.streams.get_audio_only().url, 'title': video.title}
-                if not search.results:
-                    search.get_next_results()
-            return False
+            video:pt.YouTube = pt.Search(item).results.pop(0)
+            return {'source': video.streams.get_audio_only().url, 'title': video.title}
+
         except Exception:
             print('an exception occured while searching youtube')
-            print('EXPETION IN SEARCH_YT')
+            print('EXCPETION IN SEARCH_YT')
             return False
 
     def play_next(self) -> None:
