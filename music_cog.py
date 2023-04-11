@@ -94,7 +94,6 @@ class music_cog(commands.Cog):
         query = " ".join(args)
         await self.add_song_queue(ctx, query)
 
-
     @commands.command(name="priority_play", aliases=["prio_play","prio_p","priop"], help="adds song to the front of the queue")
     async def priority_play(self, ctx, *args):
         print('priority_play command')
@@ -142,7 +141,6 @@ class music_cog(commands.Cog):
             self.vc.stop()
             # try to play next in queue if it exists
             await self.play_music(ctx)
-
 
     @commands.command(name="queue", aliases=["q"], help="Displays the current songs in queue")
     async def queue(self, ctx):
