@@ -15,7 +15,7 @@ Here are some of my commands:
 .queue(s) - displays the current music queue up to 10 songs
 .skip(s) - skips the current song being played
 .clear - stops music playback and clears queue
-.leave(l, disconnect) - disconnects the bot from voice channel and clears queue
+.disconnect(dc) - disconnects the bot from voice channel and clears queue
 .pause - pauses the current song being played
 .resume - resumes the current song being played
 .current(c) - displays the current song being played

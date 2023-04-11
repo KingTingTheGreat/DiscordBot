@@ -208,17 +208,17 @@ class music_cog(commands.Cog):
         self.current_song = None
         await ctx.send("Music queue cleared")
 
-    @commands.command(name="leave", aliases=["disconnect", "dc"], help="Kick the bot from VC")
-    async def leave(self, ctx:commands.context.Context) -> None:
+    @commands.command(name="disconnect", aliases=["dc"], help="Disconnect the bot from VC")
+    async def disconnect(self, ctx:commands.context.Context) -> None:
         if ctx.author.voice.channel != self.vc.channel:
             await ctx.send("You must be in the same voice channel as the bot to use this command")
             if ctx.author.guild_permissions.administrator == False:
                 return
             await ctx.send("Admin override: disconnecting")
-        print('leave command')
+        print('disconnect command')
         self.is_playing = False
         self.is_paused = False
         self.music_queue = []
         self.current_song = None
-        await ctx.send("Leaving voice channel :(")
+        await ctx.send("Disconnecting from voice channel :(")
         await self.vc.disconnect()
