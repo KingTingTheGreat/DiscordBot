@@ -10,14 +10,14 @@ class help_cog(commands.Cog):
 Hello! I am TheMusicIndustry, a bot that can play music from YouTube. 
 Here are some of my commands:
 .help - displays all the available commands
-.play(p) - finds the song on youtube and plays it in your current channel
+.play(p) - finds the song on youtube and adds it to queue
 .playlist(pl) - finds the playlist on youtube and adds all the songs to queue
-.queue(s) - displays the current music queue
+.queue(s) - displays the current music queue up to 10 songs
 .skip(s) - skips the current song being played
-.clear - Stops the music and clears the queue
-.leave(l, disconnect) - Disconnected the bot from the voice channel
-.pause - pauses the current song being played or resumes if already paused
-.resume - resumes playing the current song
+.clear - stops music playback and clears queue
+.leave(l, disconnect) - disconnects the bot from voice channel and clears queue
+.pause - pauses the current song being played
+.resume - resumes the current song being played
 .current(c) - displays the current song being played
 ```
 """
