@@ -86,14 +86,14 @@ class music_cog(commands.Cog):
         title:str = "title"  # use this to access the title of the song
         if not song:
             await ctx.send(f"{query} is invalid or not found")
+            return
+        await ctx.send(f'Added "{song[title]}" to the queue')
+        if front:
+            self.music_queue.insert(0, [song, ctx.author.voice.channel])
         else:
-            await ctx.send(f'Added "{song[title]}" to the queue')
-            if front:
-                self.music_queue.insert(0, [song, ctx.author.voice.channel])
-            else:
-                self.music_queue.append([song, ctx.author.voice.channel])
-            if not self.is_playing:
-                await self.play_music(ctx)
+            self.music_queue.append([song, ctx.author.voice.channel])
+        if not self.is_playing:
+            await self.play_music(ctx)
 
     @commands.command(name="play", aliases=["p","P"], help="Plays selected song from youtube")
     async def play(self, ctx, *args) -> None:
@@ -151,24 +151,24 @@ class music_cog(commands.Cog):
             await self.play_music(ctx)
 
     @commands.command(name="queue", aliases=["q"], help="Displays the current songs in queue")
-    async def queue(self, ctx) -> None:
+    async def queue(self, ctx, num=10) -> None:
         print('queue command')
         retval:str = "Song Queue: ("
-        if len(self.music_queue) < 10:
+        if len(self.music_queue) < num:
             retval += f'{len(self.music_queue)}/'
         else:
-            retval += '10/'
+            retval += f'{num}/'
         retval += f'{len(self.music_queue)})\n'
         for i in range(0, len(self.music_queue)):
             # display first 10 songs in the queue
-            if i >= 10: 
+            if i >= num: 
                 break
             retval += self.music_queue[i][0]['title'] + "\n"
-
-        if retval:
-            await ctx.send(retval)
+        # sending messages
+        if len(retval) > 2000:  # discord message limit is 2000 characters
+            await self.queue(ctx, num-1)
         else:
-            await ctx.send("No music in queue")
+            await ctx.send(retval)
 
     @commands.command(name="clear", help="Stops the music and clears the queue")
     async def clear(self, ctx) -> None:
