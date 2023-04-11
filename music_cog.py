@@ -19,9 +19,9 @@ class music_cog(commands.Cog):
 
         self.vc:discord.voice_client.VoiceClient = None
 
-     #searching the item on youtube
-    def search_yt(self, item:str) -> dict[str, any]:
-        print(f'search_yt: {item}')
+    # searching the item on youtube
+    def search_video(self, item:str) -> dict[str, any]:
+        print(f'search_video: {item}')
         try:
             video:pt.YouTube = pt.Search(item).results.pop(0)
             return {'source': video.streams.get_audio_only().url, 'title': video.title}
@@ -29,7 +29,7 @@ class music_cog(commands.Cog):
         except Exception:
             print('an exception occured while searching youtube')
             return None
-
+        
     def play_next(self) -> None:
         if len(self.music_queue) > 0:
             self.is_playing = True
@@ -52,6 +52,10 @@ class music_cog(commands.Cog):
             self.is_paused = False
             self.current_song = None
             return
+        if self.is_paused:
+            self.vc.resume()
+            self.is_paused = False
+            return
         target_channel = self.music_queue[0][1]
         # try to connect to voice channel if you are not already connected
         if self.vc == None or not self.vc.is_connected():
@@ -62,7 +66,6 @@ class music_cog(commands.Cog):
                 return
         else:
             await self.vc.move_to(target_channel)
-        
         #remove the first element as you are currently playing it
         self.current_song = self.music_queue.pop(0)
         m_url = self.current_song[0]['source']
@@ -76,11 +79,8 @@ class music_cog(commands.Cog):
         if ctx.author.voice is None:
             await ctx.send("You must be in a voice channel!")
             return
-        if self.is_paused:
-            self.vc.resume()
-            return
         await ctx.send(f'Searching for "{query}"...')
-        song:dict[str, any] = self.search_yt(query)
+        song:dict[str, any] = self.search_video(query)
         title:str = "title"  # use this to access the title of the song
         if not song:
             await ctx.send(f"{query} is invalid or not found")
@@ -90,17 +90,28 @@ class music_cog(commands.Cog):
             self.music_queue.insert(0, [song, ctx.author.voice.channel])
         else:
             self.music_queue.append([song, ctx.author.voice.channel])
-        if not self.is_playing:
+        if not self.is_playing or self.is_paused:
             await self.play_music(ctx)
 
-    @commands.command(name="play", aliases=["p","P"], help="Plays selected song from youtube")
+    # adding songs of a playlist to queue
+    async def add_playlist_queue(self, ctx:commands.context.Context, item:str) -> str:
+        print(f'add_playlist_queue: {item}')
+        try:
+            playlist:pt.Playlist = pt.Playlist(item)
+            for video in playlist.videos:
+                self.music_queue.append([{'source': video.streams.get_audio_only().url, 'title': video.title}, ctx.author.voice.channel])
+            return playlist.title
+        except Exception:
+            print('an exception occured while searching youtube')
+
+    @commands.command(name="play", aliases=["p","P"], help="Adds a song to the end of the queue")
     async def play(self, ctx:commands.context.Context, *args) -> None:
         # print(self.is_playing, self.is_paused)
         print('play command')
         query:str = " ".join(args)
         await self.add_song_queue(ctx, query)
 
-    @commands.command(name="priority_play", aliases=["prio_play","prio_p","priop"], help="adds song to the front of the queue")
+    @commands.command(name="priority_play", aliases=["prio_play","prio_p","priop"], help="Adds song to the front of the queue")
     async def priority_play(self, ctx:commands.context.Context, *args) -> None:
         print('priority_play command')
         query:str = " ".join(args)
@@ -108,6 +119,19 @@ class music_cog(commands.Cog):
             await ctx.send("You do not have permission to use this command")
             return
         await self.add_song_queue(ctx, query, front=True)
+
+    @commands.command(name="playlist", aliases=["plylst", "pl"], help="Adds a playlist to queue")
+    async def playlist(self, ctx:commands.context.Context, *args) -> None:
+        print('playlist command')
+        query:str = " ".join(args)
+        await ctx.send(f'Searching for "{query}"...')
+        title:str = await self.add_playlist_queue(ctx, query)
+        if not title:
+            await ctx.send(f"{query} is invalid or not found")
+            return
+        await ctx.send(f'Added "{title}" to the queue')
+        if not self.is_playing:
+            await self.play_music(ctx)
 
     @commands.command(name="current", aliases=["c","C"], help="Displays the current song being played")
     async def current(self, ctx:commands.context.Context) -> None:
