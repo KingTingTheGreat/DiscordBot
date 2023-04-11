@@ -28,7 +28,7 @@ class music_cog(commands.Cog):
 
         except Exception:
             print('an exception occured while searching youtube')
-            return False
+            return None
 
     def play_next(self) -> None:
         if len(self.music_queue) > 0:
@@ -39,14 +39,18 @@ class music_cog(commands.Cog):
             m_url = self.current_song[0]['source']
 
             self.vc.play(discord.FFmpegPCMAudio(m_url, **self.FFMPEG_OPTIONS), after=lambda e: self.play_next())
+        # no more songs left to play
         else:
             self.is_playing = False
+            self.is_paused = False
             self.current_song = None
 
     # infinite loop checking 
     async def play_music(self, ctx:commands.context.Context) -> None:
         if len(self.music_queue) == 0:
             self.is_playing = False
+            self.is_paused = False
+            self.current_song = None
             return
         target_channel = self.music_queue[0][1]
         # try to connect to voice channel if you are not already connected
@@ -65,6 +69,7 @@ class music_cog(commands.Cog):
         self.vc.play(discord.FFmpegPCMAudio(m_url, **self.FFMPEG_OPTIONS), after=lambda e: self.play_next())
         
         self.is_playing = True
+        self.is_paused = False
 
     async def add_song_queue(self, ctx:commands.context.Context, query:str, front:bool=False) -> None:
         # user must be in a voice channel to add song to queue
@@ -123,6 +128,7 @@ class music_cog(commands.Cog):
             await ctx.send("Pausing playback")
             self.is_playing = False
             self.is_paused = True
+            # current song does not change
             self.vc.pause()
 
     @commands.command(name = "resume", aliases=["r","R"], help="Resumes playing with the discord bot")
@@ -132,6 +138,7 @@ class music_cog(commands.Cog):
             await ctx.send("Resuming playback")
             self.is_paused = False
             self.is_playing = True
+            # current song does not change
             self.vc.resume()
 
     @commands.command(name = "skip", aliases=["s","S"], help="Skips the current song being played")
@@ -159,7 +166,7 @@ class music_cog(commands.Cog):
             retval += self.music_queue[i][0]['title'] + "\n"
         # sending messages
         if len(retval) > 2000:  # discord message limit is 2000 characters
-            await self.queue(ctx, num-1)
+            await self.queue(ctx, num-1)  # try again but show one less song
         else:
             await ctx.send(retval)
 
