@@ -6,29 +6,36 @@ import requests
 
 class music_cog(commands.Cog):
     def __init__(self, bot):
-        self.bot = bot
+        self.bot:commands.Bot = bot
     
-        self.is_playing = False
-        self.is_paused = False
+        self.is_playing:bool = False
+        self.is_paused:bool = False
 
         self.current_song = None
 
         # [[song, channel]]
-        self.music_queue = []
-        self.FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
+        self.music_queue:list[list[str]] = []
+        self.FFMPEG_OPTIONS:dict[str, str] = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
 
         self.vc = None
 
      #searching the item on youtube
-    def search_yt(self, item):
+    def search_yt(self, item) -> dict[str, any]:
         try:
-            video = pt.Search(item).results[0]
-            return {'source': video.streams.get_audio_only().url, 'title': video.title}
+            search:pt.Search = pt.Search(item)
+            while search.results:
+                video:pt.YouTube = search.results.pop(0)
+                # only videos that are longer than 1 minute to filter out shorts
+                if video.length > 60:
+                    return {'source': video.streams.get_audio_only().url, 'title': video.title}
+                if not search.results:
+                    search.get_next_results()
+            return False
         except Exception:
             print('an exception occured while searching youtube')
             return False
 
-    def play_next(self):
+    def play_next(self) -> None:
         if len(self.music_queue) > 0:
             self.is_playing = True
 
@@ -42,15 +49,13 @@ class music_cog(commands.Cog):
             self.current_song = None
 
     # infinite loop checking 
-    async def play_music(self, ctx):
+    async def play_music(self, ctx) -> None:
         if len(self.music_queue) > 0:
-
             target_channel = self.music_queue[0][1]
-
-            #try to connect to voice channel if you are not already connected
+            # try to connect to voice channel if you are not already connected
             if self.vc == None or not self.vc.is_connected():
                 self.vc = await target_channel.connect()
-                #in case we fail to connect
+                # in case we fail to connect
                 if self.vc == None:
                     await ctx.send("Could not connect to the voice channel")
                     return
@@ -66,7 +71,7 @@ class music_cog(commands.Cog):
         else:
             self.is_playing = False
 
-    async def add_song_queue(self, ctx, query, front=False):
+    async def add_song_queue(self, ctx, query, front=False) -> None:
         # user must be in a voice channel to add song to queue
         if ctx.author.voice is None:
             await ctx.send("You must be in a voice channel!")
@@ -74,8 +79,8 @@ class music_cog(commands.Cog):
             self.vc.resume()
         else:
             await ctx.send(f'Searching for "{query}"...')
-            song = self.search_yt(query)
-            title = "title"  # use this to access the title of the song
+            song:dict[str, any] = self.search_yt(query)
+            title:str = "title"  # use this to access the title of the song
             if not song:
                 await ctx.send(f"{query} is invalid or not found")
             else:
@@ -88,23 +93,23 @@ class music_cog(commands.Cog):
                     await self.play_music(ctx)
 
     @commands.command(name="play", aliases=["p","P"], help="Plays selected song from youtube")
-    async def play(self, ctx, *args):
+    async def play(self, ctx, *args) -> None:
         # print(self.is_playing, self.is_paused)
         print('play command')
-        query = " ".join(args)
+        query:str = " ".join(args)
         await self.add_song_queue(ctx, query)
 
     @commands.command(name="priority_play", aliases=["prio_play","prio_p","priop"], help="adds song to the front of the queue")
-    async def priority_play(self, ctx, *args):
+    async def priority_play(self, ctx, *args) -> None:
         print('priority_play command')
-        query = " ".join(args)
+        query:str = " ".join(args)
         if ctx.author.guild_permissions.administrator == False:
             await ctx.send("You do not have permission to use this command")
             return
         await self.add_song_queue(ctx, query, front=True)
 
     @commands.command(name="current", aliases=["c","C"], help="Displays the current song being played")
-    async def current(self, ctx):
+    async def current(self, ctx) -> None:
         print('current command')
         if self.is_playing:
             # debugging
@@ -116,7 +121,7 @@ class music_cog(commands.Cog):
             await ctx.send("No song is currently playing")
 
     @commands.command(name="pause", help="Pauses the current song being played")
-    async def pause(self, ctx, *args):
+    async def pause(self, ctx, *args) -> None:
         print('pause command')
         if self.is_playing:
             await ctx.send("Pausing playback")
@@ -125,7 +130,7 @@ class music_cog(commands.Cog):
             self.vc.pause()
 
     @commands.command(name = "resume", aliases=["r","R"], help="Resumes playing with the discord bot")
-    async def resume(self, ctx, *args):
+    async def resume(self, ctx, *args) -> None:
         print('resume command')
         if self.is_paused:
             await ctx.send("Resuming playback")
@@ -134,7 +139,7 @@ class music_cog(commands.Cog):
             self.vc.resume()
 
     @commands.command(name = "skip", aliases=["s","S"], help="Skips the current song being played")
-    async def skip(self, ctx):
+    async def skip(self, ctx) -> None:
         print('skip command')
         if self.vc != None and self.vc:
             await ctx.send("Skipping song")
@@ -143,9 +148,9 @@ class music_cog(commands.Cog):
             await self.play_music(ctx)
 
     @commands.command(name="queue", aliases=["q"], help="Displays the current songs in queue")
-    async def queue(self, ctx):
+    async def queue(self, ctx) -> None:
         print('queue command')
-        retval = "Song Queue: ("
+        retval:str = "Song Queue: ("
         if len(self.music_queue) < 10:
             retval += f'{len(self.music_queue)}/'
         else:
@@ -163,7 +168,7 @@ class music_cog(commands.Cog):
             await ctx.send("No music in queue")
 
     @commands.command(name="clear", help="Stops the music and clears the queue")
-    async def clear(self, ctx):
+    async def clear(self, ctx) -> None:
         print('clear command')
         if self.vc != None and self.is_playing:
             self.vc.stop()
@@ -172,7 +177,7 @@ class music_cog(commands.Cog):
         await ctx.send("Music queue cleared")
 
     @commands.command(name="leave", aliases=["disconnect", "dc"], help="Kick the bot from VC")
-    async def leave(self, ctx):
+    async def leave(self, ctx) -> None:
         print('leave command')
         self.is_playing = False
         self.is_paused = False
