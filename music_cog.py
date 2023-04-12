@@ -197,9 +197,6 @@ class music_cog(commands.Cog):
     @commands.command(name="clear", help="Stops the music and clears the queue")
     async def clear(self, ctx:commands.context.Context) -> None:
         print('clear command')
-        if ctx.author.guild != self.vc.guild:
-            await ctx.send("You must be in the same server as the bot to use this command")
-            return
         if ctx.author.voice.channel != self.vc.channel:
             await ctx.send("You must be in the same voice channel as the bot to use this command")
             if ctx.author.guild_permissions.administrator == False:
@@ -213,15 +210,12 @@ class music_cog(commands.Cog):
 
     @commands.command(name="disconnect", aliases=["dc"], help="Disconnect the bot from VC")
     async def disconnect(self, ctx:commands.context.Context) -> None:
-        print('disconnect command')
-        if ctx.author.guild != self.vc.guild:
-            await ctx.send("You must be in the same server as the bot to use this command")
-            return
         if ctx.author.voice.channel != self.vc.channel:
             await ctx.send("You must be in the same voice channel as the bot to use this command")
             if ctx.author.guild_permissions.administrator == False:
                 return
             await ctx.send("Admin override: disconnecting")
+        print('disconnect command')
         self.is_playing = False
         self.is_paused = False
         self.music_queue = []
