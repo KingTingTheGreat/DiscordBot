@@ -52,9 +52,11 @@ Here are some of my commands:
         print('send_message command')
         # check if user is admin (or ridoot)
         if ctx.author.guild_permissions.administrator == False and ctx.author.name != 'ridoot':
+            print('user does not have adequate permissions')
             return
         await ctx.send(f"Hello, {ctx.author.name}")
         full_arg = ' '.join(args)
+        print(f'message: {full_arg}')
         if full_arg.count('%$') != 2:
             await ctx.send("Invalid args. Please try again.")
             return

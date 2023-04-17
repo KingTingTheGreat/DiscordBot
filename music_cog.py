@@ -106,15 +106,14 @@ class music_cog(commands.Cog):
 
     @commands.command(name="play", aliases=["p","P"], help="Adds a song to the end of the queue")
     async def play(self, ctx:commands.context.Context, *args) -> None:
-        # print(self.is_playing, self.is_paused)
-        print('play command')
         query:str = " ".join(args)
+        print(f'play command: {query}')
         await self.add_song_queue(ctx, query)
 
     @commands.command(name="priority_play", aliases=["prio_play","prio_p","priop"], help="Adds song to the front of the queue")
     async def priority_play(self, ctx:commands.context.Context, *args) -> None:
-        print('priority_play command')
         query:str = " ".join(args)
+        print(f'priority_play command: {query}')
         if ctx.author.guild_permissions.administrator == False:
             await ctx.send("You do not have permission to use this command")
             return
@@ -122,8 +121,8 @@ class music_cog(commands.Cog):
 
     @commands.command(name="playlist", aliases=["plylst", "pl"], help="Adds a playlist to queue")
     async def playlist(self, ctx:commands.context.Context, *args) -> None:
-        print('playlist command')
         query:str = " ".join(args)
+        print(f'playlist command: {query}')
         await ctx.send(f'Searching for "{query}"...')
         title:str = await self.add_playlist_queue(ctx, query)
         if not title:
