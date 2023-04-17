@@ -6,4 +6,6 @@ if you wish to copy this code, you will need to use your own token in it's own t
 https://discord.com/developers/applications
 this bot utilizes the pytube library. however, this library has issues when it comes to YouTube Shorts. apply this change to avoid this issue.
 https://github.com/pytube/pytube/pull/1447/commits/bad56348969b4ef3fc717272dcc8083224157c7b 
+
+this bot is running on a LibreComputers LePotato.
 ![alt text](LePotato.png)
