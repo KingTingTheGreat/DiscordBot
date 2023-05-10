@@ -107,13 +107,13 @@ class music_cog(commands.Cog):
     @commands.command(name="play", aliases=["p","P"], help="Adds a song to the end of the queue")
     async def play(self, ctx:commands.context.Context, *args) -> None:
         query:str = " ".join(args)
-        print(f'play command: {query}')
+        print(f'{ctx.author.name} - play: {query}')
         await self.add_song_queue(ctx, query)
 
     @commands.command(name="priority_play", aliases=["prio_play","prio_p","priop"], help="Adds song to the front of the queue")
     async def priority_play(self, ctx:commands.context.Context, *args) -> None:
         query:str = " ".join(args)
-        print(f'priority_play command: {query}')
+        print(f'{ctx.author.name} - priority_play: {query}')
         if ctx.author.guild_permissions.administrator == False:
             await ctx.send("You do not have permission to use this command")
             return
@@ -122,7 +122,7 @@ class music_cog(commands.Cog):
     @commands.command(name="playlist", aliases=["plylst", "pl"], help="Adds a playlist to queue")
     async def playlist(self, ctx:commands.context.Context, *args) -> None:
         query:str = " ".join(args)
-        print(f'playlist command: {query}')
+        print(f'{ctx.author.name} - playlist: {query}')
         await ctx.send(f'Searching for "{query}"...')
         title:str = await self.add_playlist_queue(ctx, query)
         if not title:
@@ -134,7 +134,7 @@ class music_cog(commands.Cog):
 
     @commands.command(name="current", aliases=["c","C"], help="Displays the current song being played")
     async def current(self, ctx:commands.context.Context) -> None:
-        print('current command')
+        print(f'{ctx.author.name} - current')
         if self.is_playing:
             # debugging
             if self.current_song is None:
@@ -146,7 +146,7 @@ class music_cog(commands.Cog):
 
     @commands.command(name="pause", help="Pauses the current song being played")
     async def pause(self, ctx:commands.context.Context, *args) -> None:
-        print('pause command')
+        print(f'{ctx.author.name} - pause')
         if self.is_playing:
             await ctx.send("Pausing playback")
             self.is_playing = False
@@ -156,7 +156,7 @@ class music_cog(commands.Cog):
 
     @commands.command(name = "resume", aliases=["r","R"], help="Resumes playing with the discord bot")
     async def resume(self, ctx:commands.context.Context, *args) -> None:
-        print('resume command')
+        print(f'{ctx.author.name} - resume')
         if self.is_paused:
             await ctx.send("Resuming playback")
             self.is_paused = False
@@ -166,7 +166,7 @@ class music_cog(commands.Cog):
 
     @commands.command(name = "skip", aliases=["s","S"], help="Skips the current song being played")
     async def skip(self, ctx:commands.context.Context) -> None:
-        print('skip command')
+        print(f'{ctx.author.name} - skip')
         if self.vc != None and self.vc:
             await ctx.send("Skipping song")
             self.vc.stop()
@@ -175,7 +175,7 @@ class music_cog(commands.Cog):
 
     @commands.command(name="queue", aliases=["q"], help="Displays the current songs in queue")
     async def queue(self, ctx:commands.context.Context, num=10) -> None:
-        print('queue command')
+        print(f'{ctx.author.name} - queue')
         retval:str = "Song Queue: ("
         if len(self.music_queue) < num:
             retval += f'{len(self.music_queue)}/'
@@ -195,7 +195,7 @@ class music_cog(commands.Cog):
 
     @commands.command(name="clear", help="Stops the music and clears the queue")
     async def clear(self, ctx:commands.context.Context) -> None:
-        print('clear command')
+        print(f'{ctx.author.name} - clear')
         if ctx.author.voice.channel != self.vc.channel:
             await ctx.send("You must be in the same voice channel as the bot to use this command")
             if ctx.author.guild_permissions.administrator == False:
@@ -214,7 +214,7 @@ class music_cog(commands.Cog):
             if ctx.author.guild_permissions.administrator == False:
                 return
             await ctx.send("Admin override: disconnecting")
-        print('disconnect command')
+        print(f'{ctx.author.name} - disconnect')
         self.is_playing = False
         self.is_paused = False
         self.music_queue = []

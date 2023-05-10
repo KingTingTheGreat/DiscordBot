@@ -36,7 +36,7 @@ Here are some of my commands:
 
     @commands.command(name="help", help="Displays all the available commands")
     async def help(self, ctx):
-        print('help command')
+        print(f'{ctx.author.name} - help')
         await ctx.send(self.help_message)
 
     async def send_to_all(self, msg):
@@ -49,7 +49,7 @@ Here are some of my commands:
         """
         format of command call: .sm server%$channel%$message
         """
-        print('send_message command')
+        print(f'{ctx.author.name} - send_message')
         # check if user is admin (or ridoot)
         if ctx.author.guild_permissions.administrator == False and ctx.author.name != 'ridoot':
             print('user does not have adequate permissions')
