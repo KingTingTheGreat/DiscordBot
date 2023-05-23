@@ -1,5 +1,6 @@
 // igoring the file with the token for obvious security reasons
 token.txt
+api-key.txt
 
 // ignoring pychache directory as it is not needed
 __pycache__/
