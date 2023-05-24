@@ -71,6 +71,7 @@ Here are some of my commands:
             if ctx.author not in guild.members:
                 # user is not in this server
                 await ctx.send(f"You must be in the specified server: {target_server}")
+                print(f"User is not in the specified server: {target_server}")
                 return
             # find channel
             for channel in guild.text_channels:
@@ -78,5 +79,10 @@ Here are some of my commands:
                     continue
                 # send message
                 await channel.send(message)
+                break
+            else:
+                # channel not found
+                await ctx.send(f"Channel not found: {target_channel}")
+                print(f"Channel not found: {target_channel}")
             
         
