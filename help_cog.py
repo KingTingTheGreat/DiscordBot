@@ -56,11 +56,13 @@ Here are some of my commands:
             return
         await ctx.send(f"Hello, {ctx.author.name}")
         full_arg = ' '.join(args)
-        print(f'message: {full_arg}')
         if full_arg.count('%$') != 2:
             await ctx.send("Invalid args. Please try again.")
             return
         target_server, target_channel, message = full_arg.split('%$')
+        print(f"target_server: {target_server}")
+        print(f"target_channel: {target_channel}")
+        print(f"message: {message}")
         # find server/guild
         for guild in self.bot.guilds:
             # stripping quotes because of how discord.py handles guild names
