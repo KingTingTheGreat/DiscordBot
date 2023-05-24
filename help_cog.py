@@ -57,7 +57,7 @@ Here are some of my commands:
         await ctx.send(f"Hello, {ctx.author.name}")
         full_arg = ' '.join(args)
         if full_arg.count('%$') != 2:
-            await ctx.send("Invalid args. Please try again.")
+            await ctx.send("Invalid args. Please try again. Format: .sm server%$channel%$message")
             return
         target_server, target_channel, message = full_arg.split('%$')
         print(f"target_server: {target_server}")
