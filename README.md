@@ -8,4 +8,4 @@ this bot utilizes the pytube library. however, this library has issues when it c
 https://github.com/pytube/pytube/pull/1447/commits/bad56348969b4ef3fc717272dcc8083224157c7b 
 
 this bot is running on a LibreComputers LePotato.
-![alt text](LePotato.png)
+![Picture of LePotato SBC](LePotato.png)
